@@ -1,0 +1,35 @@
+networks:
+  melodiam_net:
+    name: melodiam_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.25.205.0/24"
+
+services:
+  melodiam-db:
+    image: postgres:17.4-alpine
+    container_name: melodiam-db
+    volumes:
+      - type: tmpfs
+        target: /opt/postgres_data
+    environment:
+      POSTGRES_USER: melodiam
+      POSTGRES_PASSWORD: melodiam
+      POSTGRES_DB: melodiam
+      PGDATA: /opt/postgres_data
+    ports:
+      - "127.17.0.1:5432:5432"
+    networks:
+      melodiam_net:
+        ipv4_address: 172.25.205.200
+
+  melodiam-redis:
+    image: redis:7.4-alpine
+    container_name: melodiam-redis
+    ports:
+      - "127.17.0.1:6379:6379"
+    networks:
+      melodiam_net:
+        ipv4_address: 172.25.205.202
