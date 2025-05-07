@@ -1,11 +1,11 @@
 import { timingSafeEqual } from 'crypto';
 
 import { Inject, Injectable, HttpStatus, UnauthorizedException } from '@nestjs/common';
-import type { HttpRedirectResponse } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SpotifyApi } from '@spotify/web-api-ts-sdk';
 import { eq, sql } from 'drizzle-orm';
 import type { BunSQLDatabase } from 'drizzle-orm/bun-sql';
+import type { Response } from 'express';
 import { v4 } from 'uuid';
 
 import * as schema from 'src/db/schema';
@@ -66,7 +66,8 @@ export class AuthService {
   loginEndpoint(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     session: Record<string, any>,
-  ): HttpRedirectResponse {
+    response: Response,
+  ): void {
     if (!session['isMainUser']) {
       throw new UnauthorizedException('Not main user');
     }
@@ -81,10 +82,10 @@ export class AuthService {
       state: state,
       show_dialog: String(true),
     });
-    return {
-      url: `${OAUTH_AUTHORIZE_URL}?${params.toString()}`,
-      statusCode: HttpStatus.TEMPORARY_REDIRECT,
-    };
+    response.redirect(
+      HttpStatus.TEMPORARY_REDIRECT,
+      `${OAUTH_AUTHORIZE_URL}?${params.toString()}`,
+    );
   }
 
   async loginRedirectEndpoint(
@@ -92,7 +93,8 @@ export class AuthService {
     state: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     session: Record<string, any>,
-  ): Promise<HttpRedirectResponse> {
+    response: Response,
+  ): Promise<void> {
     if (
       !timingSafeEqual(
         Buffer.from(state),
@@ -125,9 +127,6 @@ export class AuthService {
         .where(eq(users.id, existingUser.id));
     }
 
-    return {
-      url: '/',
-      statusCode: HttpStatus.TEMPORARY_REDIRECT,
-    };
+    response.redirect(HttpStatus.TEMPORARY_REDIRECT, '/');
   }
 }
