@@ -9,7 +9,7 @@ networks:
 
 services:
   melodiam-db:
-    image: postgres:17.4-alpine
+    image: postgres:17.5-alpine
     container_name: melodiam-db
     volumes:
       - type: tmpfs
