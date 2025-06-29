@@ -25,7 +25,7 @@
     "drizzle-kit": "0.31.1",
     "eslint": "9.26.0",
     "eslint-config-prettier": "10.1.2",
-    "eslint-import-resolver-typescript": "4.3.4",
+    "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-drizzle": "0.2.3",
     "eslint-plugin-import-x": "4.11.0",
     "eslint-plugin-prettier": "5.4.0",
